@@ -1,0 +1,89 @@
+-- Pengenalan Logging
+        1. Log file adalah file yang berisikan informasi kejadian dari sebuah sistem
+        2. Biasanya dalam log file, terdapat informasi waktu kejadian dan pesan kejadian
+        3. Logging adalah aksi menambah informasi log ke log file
+        4. Logging sudah menjadi standar industri untuk menampilkan informasi yang terjadi di aplikasi yang kita buat
+        5. Logging bukan hanya untuk menampilkan informasi, kadang digunakan untuk proses debugging ketika terjadi masalah di aplikasi kita
+
+-- Logging Library
+        1. Menggunakan Go-Lang sebenarnya kita bisa package log untuk melakukan logging
+        2. Hanya saja karena fiturnya terbatas, oleh karena itu kebanyakan programmer tidak menggunakannya
+        3. Pada kelas ini kita tidak akan menggunakan package log di Go-Lang untuk belajar Logging
+        4. Banyak sekali library yang bisa kita gunakan untuk logging di Go-Lang, seperti :
+                Logrus : https://github.com/sirupsen/logrus
+                Zap : https://github.com/uber-go/zap
+                Zerolog : https://github.com/rs/zerolog
+                Dan masih banyak yang lainnya
+
+        -- Logrus
+                1. Pada kelas ini kita akan menggunakan Logrus
+                2. Logrus adalah library logging untuk Go-Lang yang saat ini paling populer
+                        https://github.com/sirupsen/logrus
+
+-- Logger
+        1. Logger adalah struct utama pada Logrus untuk melakukan logging
+        2. Untuk membuat Logger, kita bisa menggunakan function New() pada package logrus
+        3. Dan hasil dari function New() adalah sebuah pointer Logger
+
+-- Level
+        1. Dalam Logging, hal yang paling penting adalah Level
+        2. Level adah penentuan prioritas atau jenis dari sebuah kejadian
+        3. Level itu dimulai dari level terendah sampai level tertinggi
+        4. Logrus mendukung banyak sekali level
+            Level       ||  Function            ||  Keterangan
+            Trace       ||  logger.Trace()      ||
+            Debug       ||  logger.Debug()      ||
+            Info        ||  logger.Info()       ||
+            Warn        ||  logger.Warn()       ||
+            Error       ||  logger.Error()      ||
+            Fatal       ||  logger.Fatal()      ||  Memanggil os.Exit(1) setelah logging
+            Panic       ||  logger.Panic()      ||  Memanggil panic() setelah logging
+
+        5. Kenapa Trace dan Debug tidak keluar di console?
+        6. Karena secara default, Logging Level yang digunakan adalah Info, artinya hanya prioritas Info keatas yang di log
+        7. Untuk mengubah Logging Level, kita bisa gunakan logger.SetLevel()
+
+-- Output
+        1. Secara default, output tujuan log yang kita kirim via Logrus adalah ke Console
+        2. Kadang kita butuh mengubah output tujuan log, misal ke File atau Database
+        3. Output Logger adalah io.Writer, jadi kita bisa menggunakan io.Writer dari Go-Lang atau bisa membuat sendiri mengikuti kontrak io.Writer
+
+-- Formatter
+        1. Saat Logger mengirim data ke Output, log yang kita kirim akan diformat menggunakan object Formatter
+        2. Logrus secara default memiliki dua formatter :
+                a. TextFormatter, yang secara default digunakan
+                b. JSONFormatter, yang bisa digunakan untuk memformat pesan log menjadi data JSON
+        3. Untuk mengubah formatter, kita bisa gunakan function logger.SetFormatter()
+
+-- Field
+        1. Saat kita mengirim informasi log, kadang kita ingin menyisipkan sesuatu pada log tersebut
+        2. Misal saja, kita ingin menyisipkan informasi siapa yang login di log nya
+        3. Cara manual kita bisa menambahkan informasi di message nya, tapi Logrus menyediakan cara yang lebih baik, yaitu menggunakan fitur Field
+        4. Dengan fitur Field, kita bisa menambahkan Field tambahan di informasi Log yang kita kirim
+        5. Sebelum melakukan logging, kita bisa gunakan function logger.WithField() untuk menambahkan Field yang kita inginkan
+
+        -- Fields
+                1. Atau, kita juga bisa langsung memasukkan beberapa Field dengan menggunakan Fields
+                2. Fields adalah alias untuk map[string]interface{}
+                3. Caranya kita bisa menggunakan function logger.WithFields()
+
+-- Entry -- CUMA TEORI AJA, AKSINYA TIDAK PERLU
+        1. Entry adalah sebuah Struct representasi dari log yang kita kirim menggunakan Logrus Logger
+        2. Setiap log yang kita kirim, maka akan dibuatkan object Entry
+        3. Contohnya ketika kita membuat Formatter sendiri, maka parameter yang kita dapat untuk melakukan
+           formatting bukanlah string message, melainkan object Entry
+                   https://github.com/sirupsen/logrus/blob/master/entry.go
+        4. Untuk membuat entry, kita bisa menggunakan function logrus.NewEntry()
+
+-- Hook
+        1. Hook adalah sebuah Struct yang bisa kita tambahkan ke Logger sebagai callback yang akan dieksekusi ketika
+           terdapat kejadian log untuk level tertentu
+        2. Contohnya misal, ketika ada log error, kita ingin mengirim notifikasi via chat ke programmer, dan lain-lain
+        3. Kita bisa menambah Hook ke Logger dengan menggunakan function logger.AddHook()
+        4. Dan kita juga bisa menambahkan lebih dari satu Hook ke Logger
+
+-- Singleton -- TIDAK DIDARANKAN
+        1. Logrus sendiri memiliki singleton object untuk Logger, sehingga kita tidak perlu membuat object Logger sendiri sebenarnya
+        2. Namun artinya, jika kita ubah data Logger singleton tersebut, maka secara otomatis yang menggunakan Logger tersebut akan berubah
+        3. Secara default, Logger singleton yang ada di logrus menggunakan TextFormatter dan Info Level
+        4. Cara menggunakan Logger singleton ini, kita bisa langsung menggunakan package logrus nya saja
